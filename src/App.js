@@ -1,52 +1,76 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import GoogleMapReact from 'google-map-react';
-
+import styles from './Mapstyle'
+import MarkerList from './MarkerList'
 // Wrap all `react-google-maps` components with `withGoogleMap` HOC
 // and name it GettingStartedGoogleMap
 
-// const AnyReactComponent = ({ text }) => <div>{text}</div>;
-
 function createMapOptions(maps) {
-  // next props are exposed at maps
-  // "Animation", "ControlPosition", "MapTypeControlStyle", "MapTypeId",
-  // "NavigationControlStyle", "ScaleControlStyle", "StrokePosition", "SymbolPath", "ZoomControlStyle",
-  // "DirectionsStatus", "DirectionsTravelMode", "DirectionsUnitSystem", "DistanceMatrixStatus",
-  // "DistanceMatrixElementStatus", "ElevationStatus", "GeocoderLocationType", "GeocoderStatus", "KmlLayerStatus",
-  // "MaxZoomStatus", "StreetViewStatus", "TransitMode", "TransitRoutePreference", "TravelMode", "UnitSystem"
-  console.log(navigator.geolocation.getCurrentPosition())
   return {
-    disableDefaultUI: true
-    // zoomControlOptions: {
-    //   position: maps.ControlPosition.RIGHT_CENTER,
-    //   style: maps.ZoomControlStyle.SMALL
-    // },
-    // mapTypeControlOptions: {
-    //   position: maps.ControlPosition.TOP_RIGHT
-    // },
-    // mapTypeControl: true
+    disableDefaultUI: true,
+    styles: styles
   };
 }
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      center: {},
+      markers: [
+
+      ]
+  }
+}
+
 
   static defaultProps = {
-    center: {lat: 59.95, lng: 30.33},
-    zoom: 11
+    center: {lat: 43.64, lng: -79.39},
+    zoom: 15
   };
 
+  componentDidMount() {
+    //golocation
+  }
+
   render() {
+    const Markers = this.state.markers.map((marker) => (
+      <div
+        lat={marker.center.lat}
+        lng={marker.center.lng}>"MARKER"</div>
+    ));
     return (
-      <div style={{width: '100%', height: '400px'}}>
+      <div style={{width: '100%', height: '600px'}}>
       <GoogleMapReact
         defaultCenter={this.props.center}
         defaultZoom={this.props.zoom}
-        options={createMapOptions}>
+        options={createMapOptions}
+        onChange={this.onChange}>
+        {Markers}
+        <button type="button" onClick={this.addMarker}>+</button>
       </GoogleMapReact>
       </div>
     );
   }
+
+
+
+  addMarker = () =>{
+    const marker = {
+      center: this.state.center
+    }
+    const markers = this.state.markers.concat(marker)
+    this.setState({markers:markers})
+  }
+
+  onChange = (obj) =>{
+    const lat = obj.center.lat;
+    const lng = obj.center.lng;
+    this.setState({center: {lat, lng}})
+  }
+
+
 }
 
 export default App;
